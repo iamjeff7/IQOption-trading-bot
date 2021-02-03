@@ -1,0 +1,16 @@
+def final(iq, initial_balance, log):
+    terminal_balance = iq.get_balance()
+    max_len = max(len(str(initial_balance)), len(str(terminal_balance)))
+    net_profit = terminal_balance - initial_balance
+    # print(' '*40)
+    # print(f' initial_balance: {initial_balance:>{max_len}}')
+    # print(f'terminal_balance: {terminal_balance:>{max_len}}')
+    # print(f'      net_profit: {net_profit:>{max_len}.2f} USD')
+    # print(f'      net_profit: {net_profit * 30.09:>{max_len}.2f} THB')
+    # print(' '*40)
+    log('-'*40+'\n')
+    log(f' initial_balance: {initial_balance:>{max_len}}\n')
+    log(f'terminal_balance: {terminal_balance:>{max_len}}\n')
+    log(f'      net_profit: {net_profit:>{max_len}.2f} USD\n')
+    log(f'      net_profit: {net_profit * 30.09:>{max_len}.2f} THB\n')
+    log('-'*40+'\n\n\n')
