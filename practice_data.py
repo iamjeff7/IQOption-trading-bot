@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import csv
 
 
 class PracticeData:
@@ -17,6 +18,15 @@ class PracticeData:
             all_data.append(np.load(f))
         return all_data
 
+class PracticeData2:
+    def __init__(self, goal, time):
+        self.data = []
+        with open('dataset/'+goal+str(time)+'.csv') as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter='\t')
+            for row in csv_reader:
+                self.data.append([row[1], row[4], row[2],row[3]])
+        self.data = np.array(self.data).astype(float)
+        
 
 if __name__ == '__main__':
     pdata = PracticeData()

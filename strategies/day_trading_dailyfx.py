@@ -15,6 +15,7 @@ def get_action(d):
     openn = d[-1, 0]
     middle = (openn+close)/2
 
+    print(f'{close:.5f}/{ema30:.5f} | {close:.5f}/{a:.5f}', end=' | ')
     # if middle > ema30 and close < a and b < a:
     if middle > ema30 and close < a:
         #print(f'{close:.5f} : {b:.5f} {a:.5f}')
@@ -32,6 +33,11 @@ def get_action(d):
     '''
     return None
 
+def bullish(d):
+    pass
+
+def bearish(d):
+    pass
 
 def get_close(bought, d, mul, action, highest_profit):
     ema30 = talib.EMA(d[:, 1], 200)[-1]
@@ -39,11 +45,11 @@ def get_close(bought, d, mul, action, highest_profit):
     middle = (close + d[-1,0]) / 2
     pip = 0.0001 * mul
     diff = abs(bought - close)
-    print(f'{now()} | {abs(bought-close):.5f} > {pip:.5f}? | {diff:.5f}/{highest_profit:.5f} | ', end='')
+    print(f'{now()} | {abs(bought-close):.5f} > {pip:.5f}? | ', end='')
     cond1 = action == 'buy'and middle < ema30
     cond2 = action == 'sell' and middle > ema30
-    cond3 = abs(bought - close) <= highest_profit*0.8
-    if diff > pip or cond1 or cond2 or cond3:
+    #cond3 = abs(bought - close) <= highest_profit*0.8
+    if diff > pip or cond1 or cond2:
         print('HELL YESSSS!')
         return 'close', 0
     else:
@@ -205,7 +211,9 @@ def log(t):
         f.write(t)
 
 def now():
+    from datetime import datetime
     return str(datetime.now())[:-7]
+
 def run_forex():
     import os
     import sys
@@ -214,7 +222,8 @@ def run_forex():
     from data import IQOption
     iq = IQOption(goal='EURUSD',
                   # size=60*60*4,
-                  size=60,
+                  # size=60,
+                  size=60*60,
                   maxdict=301,
                   money=1,
                   expiration_mode=1,
@@ -222,7 +231,7 @@ def run_forex():
     initial_balance = iq.get_balance()
     print(f'\ninitial_balance = {initial_balance} \n')
 
-    init_iter = 100
+    init_iter = 2
     iter = init_iter
     bought = 0
     current_action = 'close'
@@ -231,7 +240,7 @@ def run_forex():
 
     log(f'\n\t{iter:>{len(str(init_iter))}}/{init_iter} {now()}\n')
     while iter > 0:
-        iq.reconnect_after_30_minutes()
+        iq.reconnect_after_10_minutes()
         t1 = time.time()
         d = np.array(iq.get_candles())
         # print(f'took {round(time.time()-t1,2)} seconds to get the candles')
@@ -248,7 +257,7 @@ def run_forex():
                 log(f'{now()} | ')
                 log(f'  {action}\n')
         else:
-            action, highest_profit = get_close(bought, d, 24, current_action, highest_profit)
+            action, highest_profit = get_close(bought, d, 20, current_action, highest_profit)
             if action == 'close':
                 if (current_action == 'buy' and bought < d[-1, 1]) or (current_action == 'sell' and bought > d[-1, 1]):
                     win += abs(bought - d[-1, 1]) / 0.0001

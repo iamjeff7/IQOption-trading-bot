@@ -9,7 +9,15 @@ def r(x):
 
 
 print('\n\n')
-Iq = IQ_Option("jeffcheng0717@gmail.com", 'Iwanttotrainn0w')
+'''
+account : ['REAL', 'PRACTICE']
+'''
+import json
+from iqoptionapi.stable_api import IQ_Option
+data = json.load(open('credentials.json'))
+username = data['email']
+password = data['password']
+Iq = IQ_Option(username,password)
 print('logging in...')
 check, reason = Iq.connect()#connect to iqoption
 print('login:', 'SUCCESSFUL' if check else 'FAILED')

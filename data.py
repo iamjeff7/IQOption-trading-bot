@@ -44,13 +44,16 @@ class IQOption:
 
         #self.test_forex()
 
-    def buy(self,action, check_result):
+    def buy(self, action, check_result):
         buy_success, buy_order_id = self.Iq.buy(self.money,self.goal,action,self.expirations_mode)
+        #buy_success, buy_order_id = self.Iq.buy(int(self.get_balance()*0.1),self.goal,action,self.expirations_mode)
         if not check_result:
             return None, None
         if buy_success:
+            #print(action,'success', end='\r')
             result, earn = self.Iq.check_win_v4(buy_order_id)
             self.consecutive_error = 0
+            #print(' '*12, end='\r')
             return result, round(earn,2)
         else:
             print(action+' fail')
@@ -79,24 +82,27 @@ class IQOption:
         # return self.Iq.get_balances()['msg'][1]['amount']
         return self.Iq.get_balance()
 
-    def buy_forex(self, action):
+    def buy_forex(self, action, trail_stop=False):
         instrument_type = 'forex'
         instrument_id = self.goal
         side = action
         amount = 100
+        #amount = round((self.get_balance() - 9668) * 0.1, 2)
         leverage = 50
         type = 'market'
         limit_price = None
         stop_price = None
-        stop_lose_kind = None
-        stop_lose_value = None
+
+        #stop_lose_kind = None
+        #stop_lose_value = None
         take_profit_kind = None
         take_profit_value = None
-        #stop_lose_kind = 'percent'
-        #stop_lose_value = 1.0
+        stop_lose_kind = 'percent'
+        stop_lose_value = 1.0
         #take_profit_kind = 'percent'
-        #take_profit_value = 1.5
-        use_trail_stop = False
+        #take_profit_value = 1.0
+
+        use_trail_stop = trail_stop
         auto_margin_call = False
         use_token_for_commission = False
         check, order_id = self.Iq.buy_order(instrument_type=instrument_type, instrument_id=instrument_id,
@@ -165,11 +171,11 @@ class IQOption:
         print(self.get_position_forex())
         print()
         print('= '*20)
-    def reconnect_after_30_minutes(self):
+    def reconnect_after_10_minutes(self):
         b = datetime.datetime.now()
         #print((b-self.login_time).seconds, 'seconds')
-        if (b-self.login_time).seconds > 60 * 30:
+        if (b-self.login_time).seconds > 60 * 10:
             check, reason = self.Iq.connect()#connect to iqoption
             assert check,True
-            print(f'reconnected after {(b-self.login_time).seconds} seconds!')
+            #print(f'reconnected after {(b-self.login_time).seconds} seconds!')
             self.login_time = datetime.datetime.now()

@@ -1,3 +1,7 @@
+def now():
+    from datetime import datetime
+    return str(datetime.now())[:-7]
+
 def final(iq, initial_balance, log):
     terminal_balance = iq.get_balance()
     max_len = max(len(str(initial_balance)), len(str(terminal_balance)))
@@ -14,3 +18,14 @@ def final(iq, initial_balance, log):
     log(f'      net_profit: {net_profit:>{max_len}.2f} USD\n')
     log(f'      net_profit: {net_profit * 30.09:>{max_len}.2f} THB\n')
     log('-'*40+'\n\n\n')
+
+def countdown():
+    from datetime import datetime
+    import time
+    n = datetime.now().second
+    while n != 58:
+        print('wait until 58:', n, end='\r')
+        time.sleep(1)
+        n = datetime.now().second
+    print(' '*40, end='\r')
+
